@@ -39,6 +39,7 @@
 #include "test_rail.h"
 #include "test_pcap.h"
 #include "test_mppc.h"
+#include "test_nsc.h"
 
 void dump_data(unsigned char * p, int len, int width, char* name)
 {
@@ -130,6 +131,7 @@ int main(int argc, char* argv[])
 		add_license_suite();
 		add_stream_suite();
 		add_mppc_suite();
+		add_nsc_suite();
 	}
 	else
 	{
@@ -210,6 +212,10 @@ int main(int argc, char* argv[])
 			else if (strcmp("mppc", argv[*pindex]) == 0)
 			{
 				add_mppc_suite();
+			}
+			else if (strcmp("nsc", argv[*pindex]) == 0)
+			{
+				add_nsc_suite();
 			}
 
 			*pindex = *pindex + 1;

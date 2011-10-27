@@ -330,9 +330,12 @@ void nsc_context_initialize(NSC_CONTEXT* context, STREAM* s)
 		uint32 tempWidth,tempHeight;
 		tempWidth = ROUND_UP_TO(context->width, 8);
 		context->OrgByteCount[0] = tempWidth * context->height;
-		tempWidth = tempWidth >> 1 ;
+
+		tempWidth = ROUND_UP_TO(context->width, 8);
 		tempHeight = ROUND_UP_TO(context->height, 2);
+		tempWidth = tempWidth >> 1;
 		tempHeight = tempHeight >> 1;
+
 		context->OrgByteCount[1] = tempWidth * tempHeight;
 		context->OrgByteCount[2] = tempWidth * tempHeight;
 	}
@@ -341,7 +344,9 @@ void nsc_context_initialize(NSC_CONTEXT* context, STREAM* s)
 		tempsz = context->OrgByteCount[i];
 
 		if (i == 1 || i == 2)
+		{
 			tempsz += (tempsz & 0x7) ? (tempsz >> 3) + 0x1 : (tempsz >> 3); /* extra bytes/8 bytes for bitstream to store the 9th bit after colorloss recover */
+		}
 
 		context->org_buf[i] = stream_new(tempsz);
 	}
@@ -364,6 +369,12 @@ NSC_CONTEXT* nsc_context_new(void)
 	nsc_context = xnew(NSC_CONTEXT);
 	nsc_context->nsc_stream = xnew(NSC_STREAM);
 	return nsc_context;
+}
+
+void nsc_context_free(NSC_CONTEXT* context)
+{
+	xfree(context->nsc_stream);
+	xfree(context);
 }
 
 void nsc_process_message(NSC_CONTEXT* context, uint8* data, uint32 length)

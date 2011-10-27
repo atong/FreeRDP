@@ -54,6 +54,7 @@ struct _NSC_CONTEXT
 typedef struct _NSC_CONTEXT NSC_CONTEXT;
 
 FREERDP_API NSC_CONTEXT* nsc_context_new(void);
+FREERDP_API void nsc_context_free(NSC_CONTEXT* context);
 FREERDP_API void nsc_process_message(NSC_CONTEXT* context, uint8* data, uint32 length);
 FREERDP_API void nsc_context_initialize(NSC_CONTEXT* context, STREAM* s);
 FREERDP_API void nsc_stream_initialize(NSC_CONTEXT* context, STREAM* s);
