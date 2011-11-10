@@ -150,16 +150,21 @@ void test_nsc_decompress(void)
 
 #endif
 
-	nsc_colorloss_recover(context);
+	/* colorloss recover */
+	nsc_cl_expand(context->org_buf[1], context->Co, context->nsc_stream->colorLossLevel, context->OrgByteCount[1]);
+	nsc_cl_expand(context->org_buf[2], context->Cg, context->nsc_stream->colorLossLevel, context->OrgByteCount[2]);
 
-	if (context->nsc_stream->ChromaSubSamplingLevel > 0)
-		nsc_chroma_supersample(context);
+	/* Chroma supersample */
+	if(context->nsc_stream->ChromaSubSamplingLevel)
+	{
+		nsc_chroma_supersample(context, &context->Co, context->OrgByteCount[0]);
+		nsc_chroma_supersample(context, &context->Cg, context->OrgByteCount[0]);
+	}
 
-	nsc_ycocg_rgb(context);
+	/* YCoCg to combined ARGB */
+	nsc_ycocg_combined_argb(context);
 
-	nsc_combine_argb(context);
-
-	// freerdp_hexdump(context->bmpdata, 600);
+	// printf("\n"); freerdp_hexdump(context->bmpdata, 600);
 
 	CU_ASSERT_FATAL(memcmp(context->bmpdata, final_decompressed_data, sizeof(600)) == 0)
 

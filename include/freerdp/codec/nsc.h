@@ -50,6 +50,8 @@ struct _NSC_CONTEXT
 	uint16 height;
 	uint8* bmpdata;     /* final argb values in little endian order */
 	STREAM* org_buf[4];	/* Decompressed Plane Buffers in the respective order */
+	sint16* Co;
+	sint16* Cg;
 };
 typedef struct _NSC_CONTEXT NSC_CONTEXT;
 
@@ -61,8 +63,8 @@ FREERDP_API void nsc_stream_initialize(NSC_CONTEXT* context, STREAM* s);
 FREERDP_API void nsc_rle_decompress_data(NSC_CONTEXT* context);
 FREERDP_API void nsc_ycocg_rgb_convert(NSC_CONTEXT* context);
 FREERDP_API void nsc_rle_decode(STREAM* in, STREAM* out, uint32 origsz);
-FREERDP_API void nsc_chroma_supersample(NSC_CONTEXT* context);
-FREERDP_API void nsc_cl_expand(STREAM* stream, uint8 shiftcount, uint32 origsz);
+// FREERDP_API void nsc_chroma_supersample(NSC_CONTEXT* context);
+// FREERDP_API void nsc_cl_expand(STREAM* stream, uint8 shiftcount, uint32 origsz);
 FREERDP_API void nsc_colorloss_recover(NSC_CONTEXT* context);
 FREERDP_API void nsc_ycocg_rgb(NSC_CONTEXT* context);
 FREERDP_API void nsc_context_destroy(NSC_CONTEXT* context);
