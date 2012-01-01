@@ -342,7 +342,7 @@ void rdp_write_extended_info_packet(STREAM* s, rdpSettings* settings)
 	clientDir = (uint8*)freerdp_uniconv_out(settings->uniconv, settings->client_dir, &length);
 	cbClientDir = length;
 
-	cbAutoReconnectLen = settings->client_auto_reconnect_cookie.cbLen;
+	cbAutoReconnectLen = settings->server_auto_reconnect_cookie.cbLen;
 
 	stream_write_uint16(s, clientAddressFamily); /* clientAddressFamily */
 
@@ -366,7 +366,37 @@ void rdp_write_extended_info_packet(STREAM* s, rdpSettings* settings)
 	stream_write_uint16(s, cbAutoReconnectLen); /* cbAutoReconnectLen */
 
 	if (cbAutoReconnectLen > 0)
+	{
+		CryptoHmac hmac;
+		ARC_SC_PRIVATE_PACKET* serverCookie;
+		ARC_CS_PRIVATE_PACKET* clientCookie;
+
+		printf("Sending auto reconnect\n");
+		serverCookie = &settings->server_auto_reconnect_cookie;
+		clientCookie = &settings->client_auto_reconnect_cookie;
+
+		clientCookie->cbLen = serverCookie->cbLen;
+		clientCookie->version = serverCookie->version;
+		clientCookie->logonId = serverCookie->logonId;
+
+		hmac = crypto_hmac_new();
+		crypto_hmac_md5_init(hmac, serverCookie->arcRandomBits, 16);
+		if (settings->selected_protocol == PROTOCOL_RDP)
+		{
+			crypto_hmac_update(hmac, settings->client_random, 32);
+		}
+		else
+		{
+			const uint8 zeros[16] = { 0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0 };
+			crypto_hmac_update(hmac, zeros, 16);
+		}
+		crypto_hmac_final(hmac, clientCookie->securityVerifier, 16);
+
 		rdp_write_client_auto_reconnect_cookie(s, settings); /* autoReconnectCookie */
+
+		/* mark as used */
+		settings->server_auto_reconnect_cookie.cbLen = 0;
+	}
 
 	/* reserved1 (2 bytes) */
 	/* reserved2 (2 bytes) */

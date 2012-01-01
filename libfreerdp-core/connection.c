@@ -119,6 +119,26 @@ boolean rdp_client_disconnect(rdpRdp* rdp)
 	return transport_disconnect(rdp->transport);
 }
 
+boolean rdp_client_reconnect(rdpRdp* rdp)
+{
+	rdpSettings* settings = rdp->settings;
+
+	rdp_client_disconnect(rdp);
+
+	mcs_free(rdp->mcs);
+	nego_free(rdp->nego);
+	license_free(rdp->license);
+	transport_free(rdp->transport);
+	rdp->transport = transport_new(settings);
+	rdp->license = license_new(rdp);
+	rdp->nego = nego_new(rdp->transport);
+	rdp->mcs = mcs_new(rdp->transport);
+
+	rdp->transport->layer = TRANSPORT_LAYER_TCP;
+
+	return rdp_client_connect(rdp);
+}
+
 boolean rdp_client_redirect(rdpRdp* rdp)
 {
 	rdpSettings* settings = rdp->settings;
@@ -180,7 +200,7 @@ boolean rdp_client_redirect(rdpRdp* rdp)
 
 static boolean rdp_establish_keys(rdpRdp* rdp)
 {
-	uint8 client_random[32];
+	uint8 *client_random;
 	uint8 crypt_client_random[256 + 8];
 	uint32 key_len;
 	uint8* mod;
@@ -193,6 +213,8 @@ static boolean rdp_establish_keys(rdpRdp* rdp)
 		/* no RDP encryption */
 		return true;
 	}
+
+	client_random = rdp->settings->client_random;
 
 	/* encrypt client random */
 	memset(crypt_client_random, 0, sizeof(crypt_client_random));

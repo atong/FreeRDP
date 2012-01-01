@@ -122,6 +122,11 @@ void crypto_hmac_sha1_init(CryptoHmac hmac, const uint8* data, uint32 length)
 	HMAC_Init_ex(&hmac->hmac_ctx, data, length, EVP_sha1(), NULL);
 }
 
+void crypto_hmac_md5_init(CryptoHmac hmac, const uint8* data, uint32 length)
+{
+	HMAC_Init_ex(&hmac->hmac_ctx, data, length, EVP_md5(), NULL);
+}
+
 void crypto_hmac_update(CryptoHmac hmac, const uint8* data, uint32 length)
 {
 	HMAC_Update(&hmac->hmac_ctx, data, length);

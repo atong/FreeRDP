@@ -46,6 +46,7 @@ enum CONNECTION_STATE
 };
 
 boolean rdp_client_connect(rdpRdp* rdp);
+boolean rdp_client_reconnect(rdpRdp* rdp);
 boolean rdp_client_redirect(rdpRdp* rdp);
 boolean rdp_client_connect_mcs_connect_response(rdpRdp* rdp, STREAM* s);
 boolean rdp_client_connect_mcs_attach_user_confirm(rdpRdp* rdp, STREAM* s);

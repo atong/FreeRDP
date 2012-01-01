@@ -298,6 +298,7 @@ struct rdp_settings
 	char* privatekey_file;
 	char client_hostname[32];
 	char client_product_id[32];
+	uint8 client_random[32];
 	rdpBlob server_random;
 	rdpBlob server_certificate;
 	boolean ignore_certificate;

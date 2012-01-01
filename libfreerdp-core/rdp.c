@@ -809,7 +809,28 @@ void rdp_set_blocking_mode(rdpRdp* rdp, boolean blocking)
 
 int rdp_check_fds(rdpRdp* rdp)
 {
-	return transport_check_fds(rdp->transport);
+	int status;
+
+	status = transport_check_fds(rdp->transport);
+
+	if (status < 0 && rdp->settings->server_auto_reconnect_cookie.cbLen)
+	{
+		int i, attempts = 5;
+
+		freerdp_usleep(1000000 * 1); // XXX
+
+		for (i = 1; i < attempts; i++)
+		{
+			printf("Attempting reconnection %d/%d.\n", i, attempts);
+
+			if (rdp_client_reconnect(rdp))
+			{
+				return 0;
+			}
+		}
+	}
+
+	return status;
 }
 
 /**

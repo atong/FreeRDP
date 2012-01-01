@@ -103,6 +103,7 @@ void crypto_des3_free(CryptoDes3 des3);
 typedef struct crypto_hmac_struct* CryptoHmac;
 CryptoHmac crypto_hmac_new(void);
 void crypto_hmac_sha1_init(CryptoHmac hmac, const uint8 *data, uint32 length);
+void crypto_hmac_md5_init(CryptoHmac hmac, const uint8 *data, uint32 length);
 void crypto_hmac_update(CryptoHmac hmac, const uint8 *data, uint32 length);
 void crypto_hmac_final(CryptoHmac hmac, uint8 *out_data, uint32 length);
 void crypto_hmac_free(CryptoHmac hmac);
