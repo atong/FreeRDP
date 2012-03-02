@@ -432,7 +432,7 @@ void xf_gdi_opaque_rect(rdpContext* context, OPAQUE_RECT_ORDER* opaque_rect)
 	uint32 color;
 	xfInfo* xfi = ((xfContext*) context)->xfi;
 
-	color = freerdp_color_convert_var(opaque_rect->color, xfi->srcBpp, 32, xfi->clrconv);
+	color = freerdp_color_convert_var(opaque_rect->color, xfi->srcBpp, xfi->bpp, xfi->clrconv);
 
 	XSetFunction(xfi->display, xfi->gc, GXcopy);
 	XSetFillStyle(xfi->display, xfi->gc, FillSolid);
@@ -462,7 +462,7 @@ void xf_gdi_multi_opaque_rect(rdpContext* context, MULTI_OPAQUE_RECT_ORDER* mult
 	DELTA_RECT* rectangle;
 	xfInfo* xfi = ((xfContext*) context)->xfi;
 
-	color = freerdp_color_convert_var(multi_opaque_rect->color, xfi->srcBpp, 32, xfi->clrconv);
+	color = freerdp_color_convert_var(multi_opaque_rect->color, xfi->srcBpp, xfi->bpp, xfi->clrconv);
 
 	XSetFunction(xfi->display, xfi->gc, GXcopy);
 	XSetFillStyle(xfi->display, xfi->gc, FillSolid);
@@ -542,7 +542,7 @@ void xf_gdi_polyline(rdpContext* context, POLYLINE_ORDER* polyline)
 	xfInfo* xfi = ((xfContext*) context)->xfi;
 
 	xf_set_rop2(xfi, polyline->bRop2);
-	color = freerdp_color_convert_rgb(polyline->penColor, xfi->srcBpp, 32, xfi->clrconv);
+	color = freerdp_color_convert_var(polyline->penColor, xfi->srcBpp, xfi->bpp, xfi->clrconv);
 
 	XSetFillStyle(xfi->display, xfi->gc, FillSolid);
 	XSetForeground(xfi->display, xfi->gc, color);
